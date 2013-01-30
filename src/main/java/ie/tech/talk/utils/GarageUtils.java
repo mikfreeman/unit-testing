@@ -26,6 +26,11 @@ public class GarageUtils
 	{
 		List<SparkPlug> sparkPlugs = new ArrayList<SparkPlug>();
 
+		for (int i = 0; i < 8; i++)
+		{
+			sparkPlugs.add(new SparkPlug());
+		}
+
 		return sparkPlugs;
 	}
 }

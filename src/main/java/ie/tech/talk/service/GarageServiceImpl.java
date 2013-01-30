@@ -19,10 +19,10 @@ public class GarageServiceImpl
 		Engine engine = car.getEngine();
 		engine.stopEngine();
 		List<SparkPlug> sparkPlugs = engine.inspectSparkPlugs();
-		
-		if(!GarageUtils.checkSparkPlugs(sparkPlugs))
+
+		if (!GarageUtils.checkSparkPlugs(sparkPlugs))
 		{
-			List<SparkPlug> sparkPlugs 
+			List<SparkPlug> newSparkPlugs = GarageUtils.getNewSparkPlugs();
 		}
 
 	}
