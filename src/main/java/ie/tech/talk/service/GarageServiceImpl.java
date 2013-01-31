@@ -3,6 +3,7 @@ package ie.tech.talk.service;
 import ie.tech.talk.domain.Car;
 import ie.tech.talk.domain.Engine;
 import ie.tech.talk.domain.SparkPlug;
+import ie.tech.talk.exception.TechTalkException;
 import ie.tech.talk.utils.GarageUtils;
 
 import java.util.List;
@@ -23,7 +24,14 @@ public class GarageServiceImpl
 		if (!GarageUtils.checkSparkPlugs(sparkPlugs))
 		{
 			List<SparkPlug> newSparkPlugs = GarageUtils.getNewSparkPlugs();
+			engine.fitSparkPlugs(newSparkPlugs);
 		}
 
+		engine.startEngine();
+
+		if (!engine.isRunning())
+		{
+			throw new TechTalkException("Problem tuning Engine");
+		}
 	}
 }

@@ -7,6 +7,8 @@ import java.util.List;
 
 public class Engine
 {
+
+	private boolean starting = false;
 	private boolean running = false;
 
 	private List<SparkPlug> sparkPlugs = new ArrayList<SparkPlug>();
@@ -18,12 +20,39 @@ public class Engine
 
 	public void startEngine()
 	{
+		this.starting = true;
 		this.running = true;
+
+		if (sparkPlugs.isEmpty())
+		{
+			this.running = false;
+		}
+		else
+		{
+			for (SparkPlug sparkPlug : sparkPlugs)
+			{
+				if (!sparkPlug.isWorking())
+				{
+					this.running = false;
+				}
+			}
+		}
+
+		this.starting = false;
+
 	}
 
 	public boolean isRunning()
 	{
-		return running;
+		if (starting)
+		{
+			return false;
+		}
+		else
+		{
+			return running;
+		}
+
 	}
 
 	public List<SparkPlug> inspectSparkPlugs()
@@ -36,7 +65,7 @@ public class Engine
 		return this.sparkPlugs;
 	}
 
-	public void replaceSparkPlus(List<SparkPlug> sparkPlugs)
+	public void fitSparkPlugs(List<SparkPlug> sparkPlugs)
 	{
 		if (isRunning())
 		{
