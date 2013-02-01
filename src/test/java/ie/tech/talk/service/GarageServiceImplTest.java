@@ -142,4 +142,21 @@ public class GarageServiceImplTest
 		garageServiceImpl.tuneEngine(car);
 	}
 
+	// Mocking a private method
+	@Test(expected = TechTalkException.class)
+	@PrepareForTest(GarageServiceImpl.class)
+	public void testTuneEngineWithBrokenEngine() throws Exception
+	{
+
+		Engine engine = new Engine();
+		engine.fitSparkPlugs(sparkPlugs);
+		Car car = new Car();
+		car.setEngine(engine);
+
+		GarageServiceImpl partialGarageService = PowerMockito.spy(garageServiceImpl);
+
+		PowerMockito.doReturn(false).when(partialGarageService, "runEngineDiagnostics", engine);
+
+		partialGarageService.tuneEngine(car);
+	}
 }

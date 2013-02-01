@@ -9,17 +9,22 @@ public class GarageUtils
 {
 	public static boolean checkSparkPlugs(List<SparkPlug> sparkPlugs)
 	{
-		boolean sparkPlusOk = true;
-
-		for (SparkPlug sparkPlug : sparkPlugs)
+		if (sparkPlugs.isEmpty())
 		{
-			if (!sparkPlug.isWorking())
+			return false;
+		}
+		else
+		{
+			for (SparkPlug sparkPlug : sparkPlugs)
 			{
-				return false;
+				if (!sparkPlug.isWorking())
+				{
+					return false;
+				}
 			}
 		}
 
-		return sparkPlusOk;
+		return true;
 	}
 
 	public static List<SparkPlug> getNewSparkPlugs()
@@ -28,9 +33,10 @@ public class GarageUtils
 
 		for (int i = 0; i < 8; i++)
 		{
-			sparkPlugs.add(new SparkPlug());
+			sparkPlugs.add(InventoryUtils.getNewSparkPlugFromInventory());
 		}
 
 		return sparkPlugs;
 	}
+
 }

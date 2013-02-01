@@ -27,11 +27,22 @@ public class GarageServiceImpl
 			engine.fitSparkPlugs(newSparkPlugs);
 		}
 
+		if (!runEngineDiagnostics(engine))
+		{
+			throw new TechTalkException("Engine needs to be fixed. Repair engine before tuning");
+		}
+
 		engine.startEngine();
 
 		if (!engine.isRunning())
 		{
 			throw new TechTalkException("Problem tuning Engine");
 		}
+	}
+	private boolean runEngineDiagnostics(Engine engine)
+	{
+		// Do some long running process
+
+		return true;
 	}
 }
