@@ -2,20 +2,20 @@ package ie.tech.talk.service;
 
 import ie.tech.talk.domain.Car;
 import ie.tech.talk.domain.Engine;
+import ie.tech.talk.domain.ServiceRecord;
 import ie.tech.talk.domain.SparkPlug;
 import ie.tech.talk.exception.TechTalkException;
 import ie.tech.talk.utils.GarageUtils;
 
 import java.util.List;
 
+import org.joda.time.DateTime;
+
 public class GarageServiceImpl
 {
-	/**
-	 * Tuning the car check
-	 * 
-	 * @param car
-	 */
-	public void tuneEngine(Car car)
+	private CarServiceHistoryServiceImpl carServiceHistoryServiceImpl;
+
+	public void serviceEngine(Car car)
 	{
 		Engine engine = car.getEngine();
 		engine.stopEngine();
@@ -29,20 +29,37 @@ public class GarageServiceImpl
 
 		if (!runEngineDiagnostics(engine))
 		{
-			throw new TechTalkException("Engine needs to be fixed. Repair engine before tuning");
+			throw new TechTalkException("Engine problem. New part needed before engine service can be completed");
 		}
 
 		engine.startEngine();
 
+		ServiceRecord serviceRecord = new ServiceRecord();
+		serviceRecord.setServiceDate(new DateTime());
+
+		carServiceHistoryServiceImpl.updateServiceHistory(serviceRecord);
+
 		if (!engine.isRunning())
 		{
-			throw new TechTalkException("Problem tuning Engine");
+			throw new TechTalkException("Problem servicing Engine");
 		}
 	}
+
 	private boolean runEngineDiagnostics(Engine engine)
 	{
-		// Do some long running process
+		// Do some long running process that requires an integration test
 
 		return true;
 	}
+
+	public CarServiceHistoryServiceImpl getCarServiceHistoryServiceImpl()
+	{
+		return carServiceHistoryServiceImpl;
+	}
+
+	public void setCarServiceHistoryServiceImpl(CarServiceHistoryServiceImpl carServiceHistoryServiceImpl)
+	{
+		this.carServiceHistoryServiceImpl = carServiceHistoryServiceImpl;
+	}
+
 }
