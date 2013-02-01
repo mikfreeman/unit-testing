@@ -38,6 +38,7 @@ public class GarageServiceImplTest
 		sparkPlugs.add(new SparkPlug());
 	}
 
+	// Using Mockito to Verify and mock behaviour
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testTuneEngineWithWorkingSparkPlugs()
@@ -58,6 +59,7 @@ public class GarageServiceImplTest
 
 	}
 
+	// Using Mockito to Verify and mock behaviour
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testTuneEngineWithFaultySparkPlugs()
@@ -81,6 +83,7 @@ public class GarageServiceImplTest
 		verify(engine).startEngine();
 	}
 
+	// Using Mockito to Verify and mock behaviour
 	@Test(expected = TechTalkException.class)
 	public void testTuneEngineWithFaultyReplacementSparkPlugs()
 	{
@@ -98,6 +101,7 @@ public class GarageServiceImplTest
 		garageServiceImpl.tuneEngine(car);
 	}
 
+	// Using Mockito to Verify with real object
 	@SuppressWarnings("unchecked")
 	@Test
 	public void testTuneEngineWithWorkingSparkPlugsUsingSpy()
@@ -116,6 +120,7 @@ public class GarageServiceImplTest
 		verify(engine).startEngine();
 	}
 
+	// Using Mockito to Verify with real object and mock static call
 	@Test(expected = TechTalkException.class)
 	public void testTuneEngineWithFaultyReplacementSparkPlugsUsingSpy()
 	{
