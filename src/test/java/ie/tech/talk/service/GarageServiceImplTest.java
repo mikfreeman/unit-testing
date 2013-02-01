@@ -122,7 +122,6 @@ public class GarageServiceImplTest
 		garageServiceImpl.serviceEngine(car);
 
 		verify(engine).stopEngine();
-		// This should not be called. Change the sparkplug to return false to see error.
 		verify(engine, never()).fitSparkPlugs(any(List.class));
 		verify(engine).startEngine();
 	}
@@ -178,7 +177,6 @@ public class GarageServiceImplTest
 		garageServiceImpl.serviceEngine(car);
 
 		verify(engine).stopEngine();
-		// This should not be called. Change the sparkplug to return false to see error.
 		verify(engine, never()).fitSparkPlugs(any(List.class));
 		verify(engine).startEngine();
 

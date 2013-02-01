@@ -11,6 +11,12 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * Demonstrates a standard unit test with no mocking or method verification
+ * 
+ * @author Michael Freeman
+ * 
+ */
 public class EngineTest
 {
 	private Engine engine;

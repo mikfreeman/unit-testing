@@ -15,6 +15,12 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+/**
+ * Unit test that demonstrates the verification of static methods
+ * 
+ * @author Michael Freeman
+ * 
+ */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(InventoryUtils.class)
 public class GarageUtilsTest
@@ -35,7 +41,7 @@ public class GarageUtilsTest
 		assertFalse(GarageUtils.checkSparkPlugs(sparkPlugs));
 	}
 
-	// Verifying Static Invocation
+	// Verifying static methods
 	@Test
 	public void testGetNewSparkPlugs()
 	{
