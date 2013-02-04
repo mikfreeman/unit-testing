@@ -12,10 +12,25 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 
+/**
+ * Demo class for unit testing.
+ * 
+ * Represents the servicing of a car (My best guess at how the magical Pixies that power the engine are refreshed)
+ * 
+ * @author Michael Freeman
+ * 
+ */
 public class GarageServiceImpl
 {
 	private CarServiceHistoryServiceImpl carServiceHistoryServiceImpl;
 
+	// The complex method that we are going to test.
+	// 1. Range of possible outcomes.
+	// 2. Can throw multiple exceptions.
+	// 3. Calls static methods.
+	// 4. Rely's on complex private methods.
+	// 5. Calls other services (We need to verify the arguments to these calls).
+	// 6. No return type to test.
 	public void serviceEngine(Car car)
 	{
 		Engine engine = car.getEngine();
@@ -47,6 +62,7 @@ public class GarageServiceImpl
 		}
 	}
 
+	// Used to demonstrate how partial mocking can be used to stub private methods
 	private boolean runEngineDiagnostics(Engine engine)
 	{
 		// Do some long running process that requires an integration test

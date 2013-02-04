@@ -5,6 +5,12 @@ import ie.tech.talk.domain.SparkPlug;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Used to demonstrate how to stub static methods
+ * 
+ * @author Michael Freeman
+ * 
+ */
 public class GarageUtils
 {
 	public static boolean checkSparkPlugs(List<SparkPlug> sparkPlugs)
