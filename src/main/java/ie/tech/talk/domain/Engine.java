@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Demo class for unit testing.
  * 
- * Supposed to represent an Engine (Which from the below I know absolutly nothing about)
+ * Supposed to represent an Engine (Which from the below I know absolutely nothing about)
  * 
  * This class will be the target of the unit test in one test and the mocked object in another test
  * 
