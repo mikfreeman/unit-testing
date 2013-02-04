@@ -3,13 +3,14 @@ package ie.tech.talk.service;
 import static ie.tech.talk.test.TestUtils.getFaultySparkPlugs;
 import static ie.tech.talk.test.TestUtils.getWorkingEngine;
 import static ie.tech.talk.test.TestUtils.getWorkingSparkPlugs;
+import static org.easymock.EasyMock.anyObject;
+import static org.easymock.EasyMock.capture;
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.createMockBuilder;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import ie.tech.talk.domain.Car;
 import ie.tech.talk.domain.Engine;
 import ie.tech.talk.domain.ServiceRecord;
@@ -20,35 +21,30 @@ import ie.tech.talk.utils.GarageUtils;
 
 import java.util.List;
 
+import org.easymock.Capture;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.powermock.api.mockito.PowerMockito;
+import org.powermock.api.easymock.PowerMock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
  * Unit test that demonstrates the the usage of mocking, verifying and stubbing.
  * 
- * This implementation uses Mockito
+ * This implementation uses Easy Mock
  * 
  * @author Michael Freeman
  * 
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(GarageUtils.class)
-public class GarageServiceImplTest
+public class GarageServiceImplEasyMockTest
 {
 	private GarageServiceImpl garageServiceImpl;
 	private List<SparkPlug> sparkPlugs;
-
-	// Can use an annotation to create the mock
-	@Mock
 	private CarServiceHistoryServiceImpl carServiceHistoryServiceImpl;
-
 	private Car car;
 	private Engine engine;
 
@@ -60,28 +56,29 @@ public class GarageServiceImplTest
 	public void setUp()
 	{
 		garageServiceImpl = new GarageServiceImpl();
+		carServiceHistoryServiceImpl = createMock(CarServiceHistoryServiceImpl.class);
 		garageServiceImpl.setCarServiceHistoryServiceImpl(carServiceHistoryServiceImpl);
 		sparkPlugs = getWorkingSparkPlugs();
 
 		car = new Car();
-		engine = mock(Engine.class);
+		engine = createMock(Engine.class);
 		car.setEngine(engine);
 	}
 
-	// Using Mockito to stub methods and verify behaviour
-	@SuppressWarnings("unchecked")
+	// Using Easy Mock to stub methods and verify behaviour
 	@Test
 	public void testServiceEngineWithWorkingSparkPlugs()
 	{
-		when(engine.inspectSparkPlugs()).thenReturn(sparkPlugs);
-		when(engine.isRunning()).thenReturn(true);
+		engine.stopEngine();
 
+		expect(engine.inspectSparkPlugs()).andReturn(sparkPlugs);
+		// Note in mockito we verify that a method call did not take place. In easymock an exception is thrown if it is
+		// called.
+		expect(engine.isRunning()).andReturn(true);
+		engine.startEngine();
+		replay(engine);
 		garageServiceImpl.serviceEngine(car);
-
-		verify(engine).stopEngine();
-		// This should not be called. Stub the engine to return faulty spark plugs to see the error.
-		verify(engine, never()).fitSparkPlugs(any(List.class));
-		verify(engine).startEngine();
+		verify(engine);
 	}
 
 	// This time we use faulty spark plugs
@@ -89,51 +86,50 @@ public class GarageServiceImplTest
 	@Test
 	public void testServiceEngineWithFaultySparkPlugs()
 	{
-		// Return faulty spark plugs
-		when(engine.inspectSparkPlugs()).thenReturn(getFaultySparkPlugs());
-		when(engine.isRunning()).thenReturn(true);
-
+		engine.stopEngine();
+		expect(engine.inspectSparkPlugs()).andReturn(getFaultySparkPlugs());
+		engine.fitSparkPlugs(anyObject(List.class));
+		expect(engine.isRunning()).andReturn(true);
+		engine.startEngine();
+		replay(engine);
 		garageServiceImpl.serviceEngine(car);
-
-		verify(engine).stopEngine();
-		// This should now be called.
-		verify(engine).fitSparkPlugs(any(List.class));
-		verify(engine).startEngine();
+		verify(engine);
 	}
 
+	@SuppressWarnings("unchecked")
 	// This time the spark plugs we install turn out to be faulty.
 	// The engine didn't properly start so we expect an error
 	@Test(expected = CarServiceException.class)
 	public void testServiceEngineWithFaultyReplacementSparkPlugs()
 	{
-		when(engine.inspectSparkPlugs()).thenReturn(getFaultySparkPlugs());
-
-		// The Engine has failed to start after the service.
-		when(engine.isRunning()).thenReturn(false);
-
+		engine.stopEngine();
+		expect(engine.inspectSparkPlugs()).andReturn(getFaultySparkPlugs());
+		engine.fitSparkPlugs(anyObject(List.class));
+		engine.startEngine();
+		expect(engine.isRunning()).andReturn(false);
+		replay(engine);
 		garageServiceImpl.serviceEngine(car);
 	}
 
 	// We have decided its OK to not mock the the Engine object and to use a real object.
 	// But we still want to verify and stub some methods that the correct methods are called.
 	// We use a technique called partial mocking to achieve that
-	@SuppressWarnings("unchecked")
+	// NOTE : Could not find a way to verify the method calls with Easy Mock
 	@Test
 	public void testServiceEngineWithWorkingSparkPlugsUsingSpy()
 	{
-		Engine realEngine = new Engine();
-		realEngine.fitSparkPlugs(sparkPlugs);
-		Engine engine = spy(realEngine);
+		Engine engine = createMockBuilder(Engine.class).addMockedMethod("inspectSparkPlugs").createMock();
+		engine.fitSparkPlugs(sparkPlugs);
 		car.setEngine(engine);
 
-		// We stub the inspectSparkPlugs of the non mock object
-		when(engine.inspectSparkPlugs()).thenReturn(getFaultySparkPlugs());
+		expect(engine.inspectSparkPlugs()).andReturn(getFaultySparkPlugs());
+		replay(engine);
 
 		garageServiceImpl.serviceEngine(car);
 
-		verify(engine).stopEngine();
-		verify(engine).fitSparkPlugs(any(List.class));
-		verify(engine).startEngine();
+		// No way to verify the methods called on the spy
+		verify(engine);
+
 	}
 
 	// Stubbing Static methods. Returning faulty spark plugs from the static call
@@ -144,15 +140,18 @@ public class GarageServiceImplTest
 		Engine engine = getWorkingEngine();
 		car.setEngine(engine);
 
-		PowerMockito.mockStatic(GarageUtils.class);
-		when(GarageUtils.checkSparkPlugs(engine.inspectSparkPlugs())).thenReturn(false);
-		when(GarageUtils.getNewSparkPlugs()).thenReturn(faultySparkPlugs);
+		PowerMock.mockStatic(GarageUtils.class);
+		expect(GarageUtils.checkSparkPlugs(engine.inspectSparkPlugs())).andReturn(false);
+		expect(GarageUtils.getNewSparkPlugs()).andReturn(faultySparkPlugs);
+
+		// Note we have to use the PowerMock version
+		PowerMock.replay(GarageUtils.class);
 
 		garageServiceImpl.serviceEngine(car);
 	}
 
 	// Mocking a private method. In this case we want the runEngineDiagnostics to fail
-	// We use PowerMockito to achieve this.
+	// We use PowerMock to achieve this.
 	@Test(expected = DiagnosticFailureException.class)
 	@PrepareForTest(GarageServiceImpl.class)
 	public void testServiceEngineWithBrokenEngine() throws Exception
@@ -160,9 +159,10 @@ public class GarageServiceImplTest
 		Engine engine = getWorkingEngine();
 		car.setEngine(engine);
 
-		GarageServiceImpl partialGarageService = PowerMockito.spy(garageServiceImpl);
+		GarageServiceImpl partialGarageService = PowerMock.createPartialMock(GarageServiceImpl.class,
+				"runEngineDiagnostics");
 
-		PowerMockito.doReturn(false).when(partialGarageService, "runEngineDiagnostics", engine);
+		PowerMock.expectPrivate(partialGarageService, "runEngineDiagnostics", engine).andReturn(true);
 
 		partialGarageService.serviceEngine(car);
 	}
@@ -175,11 +175,13 @@ public class GarageServiceImplTest
 		Engine engine = getWorkingEngine();
 		car.setEngine(engine);
 
-		garageServiceImpl.serviceEngine(car);
+		Capture<ServiceRecord> serviceRecord = new Capture<ServiceRecord>();
+		carServiceHistoryServiceImpl.updateServiceHistory(capture(serviceRecord));
 
-		ArgumentCaptor<ServiceRecord> argument = ArgumentCaptor.forClass(ServiceRecord.class);
-		verify(carServiceHistoryServiceImpl).updateServiceHistory(argument.capture());
-		DateTime serviceDate = argument.getValue().getServiceDate();
+		replay(carServiceHistoryServiceImpl);
+
+		garageServiceImpl.serviceEngine(car);
+		DateTime serviceDate = serviceRecord.getValue().getServiceDate();
 
 		assertEquals(new DateTime().getYear(), serviceDate.getYear());
 		assertEquals(new DateTime().getMonthOfYear(), serviceDate.getMonthOfYear());

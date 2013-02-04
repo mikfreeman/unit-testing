@@ -1,5 +1,6 @@
 package ie.tech.talk.test;
 
+import ie.tech.talk.domain.Engine;
 import ie.tech.talk.domain.SparkPlug;
 
 import java.util.ArrayList;
@@ -23,6 +24,13 @@ public class TestUtils
 		sparkPlugs.add(faultySparkPlug);
 
 		return sparkPlugs;
+	}
+
+	public static Engine getWorkingEngine()
+	{
+		Engine engine = new Engine();
+		engine.fitSparkPlugs(getWorkingSparkPlugs());
+		return engine;
 	}
 
 }

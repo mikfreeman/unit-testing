@@ -1,6 +1,6 @@
 package ie.tech.talk.domain;
 
-import ie.tech.talk.exception.TechTalkException;
+import ie.tech.talk.exception.EngineException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +59,7 @@ public class Engine
 	{
 		if (isRunning())
 		{
-			throw new TechTalkException("Engine is still running");
+			throw new EngineException("Engine is still running");
 		}
 
 		return this.sparkPlugs;
@@ -69,7 +69,7 @@ public class Engine
 	{
 		if (isRunning())
 		{
-			throw new TechTalkException("Engine is still running");
+			throw new EngineException("Engine is still running");
 		}
 		this.sparkPlugs = sparkPlugs;
 	}

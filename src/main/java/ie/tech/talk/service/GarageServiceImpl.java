@@ -4,7 +4,8 @@ import ie.tech.talk.domain.Car;
 import ie.tech.talk.domain.Engine;
 import ie.tech.talk.domain.ServiceRecord;
 import ie.tech.talk.domain.SparkPlug;
-import ie.tech.talk.exception.TechTalkException;
+import ie.tech.talk.exception.CarServiceException;
+import ie.tech.talk.exception.DiagnosticFailureException;
 import ie.tech.talk.utils.GarageUtils;
 
 import java.util.List;
@@ -29,7 +30,8 @@ public class GarageServiceImpl
 
 		if (!runEngineDiagnostics(engine))
 		{
-			throw new TechTalkException("Engine problem. New part needed before engine service can be completed");
+			throw new DiagnosticFailureException(
+					"Engine problem. New part needed before engine service can be completed");
 		}
 
 		engine.startEngine();
@@ -41,7 +43,7 @@ public class GarageServiceImpl
 
 		if (!engine.isRunning())
 		{
-			throw new TechTalkException("Problem servicing Engine");
+			throw new CarServiceException("Problem servicing Engine");
 		}
 	}
 

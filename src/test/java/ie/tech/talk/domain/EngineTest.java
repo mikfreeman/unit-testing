@@ -3,7 +3,7 @@ package ie.tech.talk.domain;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import ie.tech.talk.exception.TechTalkException;
+import ie.tech.talk.exception.EngineException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +60,7 @@ public class EngineTest
 		assertFalse(engine.isRunning());
 	}
 
-	@Test(expected = TechTalkException.class)
+	@Test(expected = EngineException.class)
 	public void testInspectSparkPlugsWithEngineRunning()
 	{
 		engine.startEngine();
@@ -75,7 +75,7 @@ public class EngineTest
 		assertSame(newSparkPlugs, engine.inspectSparkPlugs());
 	}
 
-	@Test(expected = TechTalkException.class)
+	@Test(expected = EngineException.class)
 	public void testFitSparkPlugsWithRunningEngine()
 	{
 		engine.startEngine();
